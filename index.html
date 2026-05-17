@@ -461,10 +461,15 @@
 
   .course-card {
     background: var(--black);
-    padding: 3rem 2.2rem;
-    transition: background 0.4s;
+    padding: 3rem 2.2rem 2rem;
+    transition: background 0.4s, transform 0.3s;
     position: relative;
     overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
   }
 
   .course-card::before {
@@ -478,7 +483,45 @@
   }
 
   .course-card:hover::before { height: 100%; }
-  .course-card:hover { background: rgba(138,115,73,0.04); }
+  .course-card:hover {
+    background: rgba(138,115,73,0.06);
+    transform: translateY(-3px);
+  }
+
+  .course-card-bottom {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(138,115,73,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .course-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-light);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.3s, gap 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .course-card:hover .course-cta {
+    color: var(--cream);
+  }
+
+  .course-card:hover .course-cta-arrow {
+    transform: translateX(3px);
+  }
+
+  .course-cta-arrow {
+    transition: transform 0.3s;
+    display: inline-block;
+  }
 
   .course-tag {
     font-family: 'JetBrains Mono', 'Space Mono', monospace;
@@ -867,7 +910,7 @@
       <h2 class="section-headline">コース一覧</h2>
     </div>
     <div class="course-grid">
-      <div class="course-card">
+      <a href="https://buy.stripe.com/4gM14n06XfYgbSScz13Nm0f" class="course-card" target="_blank" rel="noopener">
         <p class="course-tag">AI × Vibe Coding</p>
         <h3 class="course-title">AIコース</h3>
         <p class="course-desc">
@@ -875,26 +918,35 @@
           サーバー代ゼロ・難しいコードなし。
           Python・JavaScript・動画編集まで、あなたのペースで。
         </p>
-        <p class="course-price">月額 ¥20,000〜</p>
-      </div>
-      <div class="course-card">
+        <div class="course-card-bottom">
+          <p class="course-price">月額 ¥20,000〜</p>
+          <span class="course-cta">申し込む <span class="course-cta-arrow">→</span></span>
+        </div>
+      </a>
+      <a href="https://buy.stripe.com/4gM14n06XfYgbSScz13Nm0f" class="course-card" target="_blank" rel="noopener">
         <p class="course-tag">Thinking</p>
         <h3 class="course-title">思考整理コース</h3>
         <p class="course-desc">
           頭の中をすっきりさせる技術。マインドマップ・瞑想・AI活用で、
           自分の思考を可視化し整理する力を身につけます。
         </p>
-        <p class="course-price">月額 ¥20,000〜</p>
-      </div>
-      <div class="course-card">
+        <div class="course-card-bottom">
+          <p class="course-price">月額 ¥20,000〜</p>
+          <span class="course-cta">申し込む <span class="course-cta-arrow">→</span></span>
+        </div>
+      </a>
+      <a href="https://buy.stripe.com/4gM14n06XfYgbSScz13Nm0f" class="course-card" target="_blank" rel="noopener">
         <p class="course-tag">Art</p>
         <h3 class="course-title">芸術コース</h3>
         <p class="course-desc">
           個展を自力で開き、作品を販売してきた現役アーティスト Eugene.N. が直接指導。
           技術だけでなく、「なぜ人の心を動かせるのか」を一緒に考えます。
         </p>
-        <p class="course-price">月額 ¥20,000〜</p>
-      </div>
+        <div class="course-card-bottom">
+          <p class="course-price">月額 ¥20,000〜</p>
+          <span class="course-cta">申し込む <span class="course-cta-arrow">→</span></span>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -945,7 +997,7 @@
       <img src="./emblem.png" alt="">
     </div>
     <h2 class="cta-title">
-      まず、60分だけ<em>試してみてください。</em>
+      まず、30分だけ<em>試してみてください。</em>
     </h2>
     <p class="cta-sub">
       体験セッションは60分。SNS運用から芸術まで、多種多様なテーマで対応できます。<br>
