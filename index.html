@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FPS学院 — Scientia Est Arma | AIに話しかけるだけで、作れる時代へ</title>
+<meta name="description" content="FPS学院 - Flex Perspective School。AIに話しかけるだけでアプリが作れる「バイブスコーディング」を中心に、思考力・創造力・AI活用力を育む教育の場。">
+<link rel="icon" type="image/png" href="./logo-fps.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --black2: #050505;
+    --white: #f0ede8;
+    --accent: #8a7349; /* エンブレムのブロンズ色に合わせた */
+    --accent-light: #b89a6a;
+    --accent2: #7eb8a4;
+    --gray: #2a2a2a;
+    --text: #d4d0c8;
+    --text-dim: #9a958d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2rem;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(138,115,73,0.15);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+  }
+
+  .nav-logo img {
+    height: 28px;
+    width: auto;
+    filter: invert(0.85) sepia(0.3) hue-rotate(15deg) brightness(1.1);
+  }
+
+  .nav-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    color: var(--accent-light);
+    font-weight: 400;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    font-weight: 400;
+  }
+
+  .nav-links a:hover { opacity: 1; color: var(--accent-light); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 3rem;
+    padding: 6rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 70% 50%, rgba(138,115,73,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 20% 30%, rgba(126,184,164,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeRight 1s 0.3s forwards;
+  }
+
+  .hero-motto {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .hero-motto-jp {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent2);
+    letter-spacing: 0.35em;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--white);
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent-light);
+    font-weight: 400;
+  }
+
+  .hero-title strong {
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    margin: 2rem 0;
+    opacity: 0.5;
+  }
+
+  .hero-sub {
+    font-size: 0.88rem;
+    line-height: 2;
+    color: var(--text);
+    max-width: 460px;
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.95rem 2.4rem;
+    background: var(--accent);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    transition: all 0.3s;
+    border: 1px solid var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.95rem 2.4rem;
+    border: 1px solid rgba(138,115,73,0.4);
+    color: var(--accent-light);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    transition: all 0.3s;
+    background: transparent;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent-light);
+    background: rgba(138,115,73,0.08);
+  }
+
+  .hero-emblem {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeLeft 1.2s 0.5s forwards;
+  }
+
+  .hero-emblem img {
+    max-width: 100%;
+    width: 480px;
+    height: auto;
+    filter: drop-shadow(0 0 60px rgba(138,115,73,0.2));
+  }
+
+  .emblem-glow {
+    position: absolute;
+    inset: -50px;
+    background: radial-gradient(circle, rgba(138,115,73,0.15) 0%, transparent 60%);
+    z-index: -1;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  /* ===== DIVIDER ORNAMENTAL ===== */
+  .ornamental-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+    color: var(--accent);
+    opacity: 0.4;
+  }
+
+  .ornamental-divider::before,
+  .ornamental-divider::after {
+    content: '';
+    height: 1px;
+    width: 100px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+  }
+
+  .ornamental-symbol {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* ===== VIBE SECTION ===== */
+  .vibe {
+    padding: 6rem 2rem 8rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .section-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--white);
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .section-headline strong {
+    color: var(--accent-light);
+    font-weight: 400;
+  }
+
+  .section-headline em {
+    font-style: italic;
+  }
+
+  .vibe-desc {
+    font-size: 0.9rem;
+    line-height: 2;
+    color: var(--text);
+    max-width: 580px;
+    margin: 0 auto 5rem;
+    text-align: center;
+  }
+
+  .vibe-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0;
+    border: 1px solid rgba(138,115,73,0.2);
+  }
+
+  .vibe-step {
+    padding: 2.5rem 2rem;
+    border-right: 1px solid rgba(138,115,73,0.15);
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .vibe-step:last-child { border-right: none; }
+  .vibe-step:hover { background: rgba(138,115,73,0.03); }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--accent);
+    opacity: 0.6;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    margin-bottom: 0.85rem;
+    font-weight: 400;
+  }
+
+  .step-desc {
+    font-size: 0.8rem;
+    line-height: 1.9;
+    color: var(--text);
+    opacity: 0.85;
+  }
+
+  /* ===== TERMINAL DEMO ===== */
+  .terminal-section {
+    padding: 3rem 2rem 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .terminal-intro {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--accent-light);
+    opacity: 0.8;
+  }
+
+  .terminal {
+    background: #0d0d0d;
+    border: 1px solid rgba(138,115,73,0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(138,115,73,0.05);
+  }
+
+  .terminal-header {
+    background: #161616;
+    padding: 0.85rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(138,115,73,0.1);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+
+  .terminal-title {
+    margin-left: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: #555;
+  }
+
+  .terminal-body {
+    padding: 1.8rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 2;
+  }
+
+  .t-comment { color: #555; }
+  .t-user { color: var(--accent2); }
+  .t-ai { color: var(--accent-light); }
+  .t-code { color: #8ec0a4; }
+  .t-output { color: #888; }
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--accent-light);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  /* ===== COURSES ===== */
+  .courses {
+    padding: 8rem 2rem;
+    background: rgba(255,255,255,0.012);
+    border-top: 1px solid rgba(138,115,73,0.1);
+    border-bottom: 1px solid rgba(138,115,73,0.1);
+  }
+
+  .courses-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .course-grid {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: rgba(138,115,73,0.12);
+  }
+
+  .course-card {
+    background: var(--black);
+    padding: 3rem 2.2rem;
+    transition: background 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .course-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.5s;
+  }
+
+  .course-card:hover::before { height: 100%; }
+  .course-card:hover { background: rgba(138,115,73,0.04); }
+
+  .course-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    color: var(--accent2);
+    margin-bottom: 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .course-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+  }
+
+  .course-desc {
+    font-size: 0.82rem;
+    line-height: 1.95;
+    color: var(--text);
+    opacity: 0.85;
+    margin-bottom: 1.8rem;
+  }
+
+  .course-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--accent-light);
+    font-style: italic;
+  }
+
+  /* ===== FEATURES ===== */
+  .features {
+    padding: 8rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .feature-list {
+    margin-top: 4rem;
+    display: grid;
+    gap: 2rem;
+  }
+
+  .feature-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    padding-bottom: 2.2rem;
+    border-bottom: 1px solid rgba(138,115,73,0.08);
+  }
+
+  .feature-item:last-child { border-bottom: none; }
+
+  .feature-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: rgba(138,115,73,0.25);
+    line-height: 1;
+    width: 3.5rem;
+  }
+
+  .feature-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.6rem;
+  }
+
+  .feature-text p {
+    font-size: 0.85rem;
+    line-height: 1.95;
+    opacity: 0.8;
+  }
+
+  /* ===== CTA SECTION ===== */
+  .cta-section {
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(138,115,73,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 80% at 30% 70%, rgba(126,184,164,0.03) 0%, transparent 60%);
+  }
+
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-emblem-mini {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 2rem;
+    opacity: 0.4;
+  }
+
+  .cta-emblem-mini img { width: 100%; height: auto; }
+
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .cta-title em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+
+  .cta-sub {
+    font-size: 0.88rem;
+    color: var(--text);
+    opacity: 0.75;
+    margin-bottom: 3rem;
+    line-height: 1.95;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 3rem 2rem;
+    border-top: 1px solid rgba(138,115,73,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-emblem {
+    width: 32px;
+    height: 32px;
+    opacity: 0.5;
+  }
+
+  .footer-emblem img { width: 100%; height: auto; }
+
+  .footer-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    opacity: 0.7;
+    letter-spacing: 0.2em;
+  }
+
+  .footer-motto {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.7rem;
+    color: var(--accent);
+    opacity: 0.5;
+    letter-spacing: 0.2em;
+    margin-top: 0.3rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 0.72rem;
+    color: var(--text);
+    opacity: 0.5;
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    transition: opacity 0.3s, color 0.3s;
+  }
+
+  .footer-links a:hover { opacity: 0.9; color: var(--accent-light); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeRight {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 7rem 1.5rem 3rem;
+      text-align: center;
+    }
+
+    .hero-content { order: 2; }
+    .hero-emblem { order: 1; }
+    .hero-emblem img { width: 280px; }
+    .hero-divider { margin: 2rem auto; }
+    .hero-sub { margin: 0 auto; }
+    .hero-cta { justify-content: center; }
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { gap: 1rem; }
+    .nav-links a { font-size: 0.65rem; }
+    .nav-logo-text { display: none; }
+    .vibe, .terminal-section, .features { padding: 5rem 1.2rem; }
+    .courses, .cta-section { padding: 5rem 1.2rem; }
+    .vibe-steps { grid-template-columns: 1fr; }
+    .vibe-step { border-right: none; border-bottom: 1px solid rgba(138,115,73,0.15); }
+    .feature-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .feature-num { font-size: 2.5rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .terminal-body { font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="./logo-fps.png" alt="FPS">
+    <span class="nav-logo-text">FPS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#vibe">バイブスコーディング</a></li>
+    <li><a href="#courses">コース</a></li>
+    <li><a href="#features">特徴</a></li>
+    <li><a href="#trial">体験予約</a></li>
+  </ul>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg-gradient"></div>
+
+  <div class="hero-content">
+    <p class="hero-motto">— Scientia Est Arma —</p>
+    <p class="hero-motto-jp">知 識 は 武 器 で あ る</p>
+
+    <h1 class="hero-title">
+      <em>AIに話しかけるだけで、</em><br>
+      作れる時代が来た。<br>
+      <strong>あなたの想像力を、<br>武器に変える場所。</strong>
+    </h1>
+
+    <div class="hero-divider"></div>
+
+    <p class="hero-sub">
+      難しいコードを覚えなくていい。<br>
+      サーバー代もかからない。<br>
+      今日中に、動くものが生まれる。<br>
+      FPS学院は、その体験から始まります。
+    </p>
+
+    <div class="hero-cta">
+      <a href="https://calendar.app.google/58ie8KBoe5nYYSub6" class="btn-primary" target="_blank" rel="noopener">無料で体験する →</a>
+      <a href="#vibe" class="btn-ghost">バイブスコーディングとは</a>
+    </div>
+  </div>
+
+  <div class="hero-emblem">
+    <div class="emblem-glow"></div>
+    <img src="./emblem.png" alt="FPS Emblem - Scientia Est Arma">
+  </div>
+</section>
+
+<!-- ===== ORNAMENTAL DIVIDER ===== -->
+<div class="ornamental-divider">
+  <span class="ornamental-symbol">✦ ✦ ✦</span>
+</div>
+
+<!-- ===== VIBE CODING ===== -->
+<section class="vibe" id="vibe">
+  <div class="section-header">
+    <p class="section-label">— Vibe Coding —</p>
+    <h2 class="section-headline">
+      <em>「作り方」を学ぶより、</em><br>
+      <strong>「作る体験」から始める。</strong>
+    </h2>
+  </div>
+  <p class="vibe-desc">
+    バイブスコーディングとは、AIに話しかけながらアプリやツールを作っていくスタイル。
+    コードを1行も書かなくていい。アイデアと言葉があれば、今日中に動くものが生まれます。
+    FPS学院では、この「作れた」という体験を全員に届けることから始めます。
+  </p>
+  <div class="vibe-steps">
+    <div class="vibe-step">
+      <div class="step-num">i.</div>
+      <h3 class="step-title">話しかける</h3>
+      <p class="step-desc">AIに「こんなものが作りたい」と伝えるだけ。設計書もコードも不要。</p>
+    </div>
+    <div class="vibe-step">
+      <div class="step-num">ii.</div>
+      <h3 class="step-title">動かす</h3>
+      <p class="step-desc">AIが即座にコードを生成。今日中に、本物のアプリが動きます。</p>
+    </div>
+    <div class="vibe-step">
+      <div class="step-num">iii.</div>
+      <h3 class="step-title">育てる</h3>
+      <p class="step-desc">作ったものを改良しながら、自分のペースで技術を身につけていく。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TERMINAL ===== -->
+<div class="terminal-section">
+  <p class="terminal-intro">— 実際のやりとり —</p>
+  <div class="terminal">
+    <div class="terminal-header">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="terminal-title">fps-vibe-demo.js</span>
+    </div>
+    <div class="terminal-body">
+      <p class="t-comment">// バイブスコーディングの実際のやりとり</p>
+      <br>
+      <p class="t-user">あなた &gt; 生徒の出席を管理するアプリが欲しい。<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Googleスプレッドシートに記録したい。</p>
+      <br>
+      <p class="t-ai">AI &nbsp;&nbsp;&nbsp;&nbsp; &gt; わかりました。Googleフォームと連携して<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; スプレッドシートに自動記録する仕組みを<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 作ります。APIキーは不要です。</p>
+      <br>
+      <p class="t-code">// → 5分後、動くアプリが完成</p>
+      <br>
+      <p class="t-output">✓ サーバー代：¥0<br>
+      ✓ コード量：0行（あなたが書いた分）<br>
+      ✓ 所要時間：今日中</p>
+      <br>
+      <p class="t-user">あなた &gt; <span class="cursor"></span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COURSES ===== -->
+<section class="courses" id="courses">
+  <div class="courses-inner">
+    <div class="section-header">
+      <p class="section-label">— Courses —</p>
+      <h2 class="section-headline">コース一覧</h2>
+    </div>
+    <div class="course-grid">
+      <div class="course-card">
+        <p class="course-tag">AI × Vibe Coding</p>
+        <h3 class="course-title">AIコース</h3>
+        <p class="course-desc">
+          バイブスコーディングを体験しながら、AIとの協働を身につける。
+          サーバー代ゼロ・難しいコードなし。
+          Python・JavaScript・動画編集まで、あなたのペースで。
+        </p>
+        <p class="course-price">月額 ¥10,000〜</p>
+      </div>
+      <div class="course-card">
+        <p class="course-tag">Thinking</p>
+        <h3 class="course-title">思考整理コース</h3>
+        <p class="course-desc">
+          頭の中をすっきりさせる技術。マインドマップ・瞑想・AI活用で、
+          自分の思考を可視化し整理する力を身につけます。
+        </p>
+        <p class="course-price">月額 ¥10,000〜</p>
+      </div>
+      <div class="course-card">
+        <p class="course-tag">Art</p>
+        <h3 class="course-title">芸術コース</h3>
+        <p class="course-desc">
+          個展を自力で開き、作品を販売してきた現役アーティスト Eugene.N. が直接指導。
+          技術だけでなく、「なぜ人の心を動かせるのか」を一緒に考えます。
+        </p>
+        <p class="course-price">月額 ¥10,000〜</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="features">
+  <div class="section-header">
+    <p class="section-label">— Why FPS —</p>
+    <h2 class="section-headline">FPSの4つの特徴</h2>
+  </div>
+  <div class="feature-list">
+    <div class="feature-item">
+      <span class="feature-num">i</span>
+      <div class="feature-text">
+        <h3>フルフレックス設計</h3>
+        <p>講師のカレンダーから自由に予約。あなたのペースで学べます。曜日・時間帯の制限なし。</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-num">ii</span>
+      <div class="feature-text">
+        <h3>セッション形式</h3>
+        <p>一方的な講義ではなく、一緒に考えるセッション形式。わからないことを「一緒にわからない」状態から始めます。</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-num">iii</span>
+      <div class="feature-text">
+        <h3>アーカイブ残し</h3>
+        <p>セッション内容は限定公開で残るので、何度でも見返せます。復習の心配なし。</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-num">iv</span>
+      <div class="feature-text">
+        <h3>追加費用なし</h3>
+        <p>教材費・システム利用料・登録料は一切かかりません。月額のみ。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section" id="trial">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <div class="cta-emblem-mini">
+      <img src="./emblem.png" alt="">
+    </div>
+    <h2 class="cta-title">
+      まず、30分だけ<em>試してみてください。</em>
+    </h2>
+    <p class="cta-sub">
+      体験セッションは60分。SNS運用から芸術まで、多種多様なテーマで対応できます。<br>
+      あなたの学びたいに、寄り添います。
+    </p>
+    <div class="cta-buttons">
+      <a href="https://calendar.app.google/58ie8KBoe5nYYSub6" class="btn-primary" target="_blank" rel="noopener">体験を予約する →</a>
+      <a href="mailto:eugembo0407numatakira@gmail.com" class="btn-ghost">メールで相談する</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-emblem">
+      <img src="./emblem.png" alt="">
+    </div>
+    <div>
+      <p class="footer-logo-text">FPS — Flex Perspective School</p>
+      <p class="footer-motto">Scientia Est Arma</p>
+    </div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">概要</a></li>
+    <li><a href="#">プライバシーポリシー</a></li>
+    <li><a href="mailto:eugembo0407numatakira@gmail.com">お問い合わせ</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>
