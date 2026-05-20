@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FPS Academy - Member Login</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;700&family=Italiana&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #14141e;
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.6);
+  --gold-dim: rgba(212, 175, 55, 0.2);
+  --text-primary: #e8e6e1;
+  --text-dim: #8a8780;
+  --border: rgba(212, 175, 55, 0.15);
+  --error: #d97757;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  background-image: 
+    radial-gradient(at 20% 30%, rgba(212, 175, 55, 0.04) 0%, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+  color: var(--text-primary);
+  font-family: 'Cormorant Garamond', 'Shippori Mincho', serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 60px 48px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.brand-title {
+  font-family: 'Italiana', serif;
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: 6px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.brand-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin: 32px 0;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  padding: 10px 0;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  border-bottom-color: var(--gold);
+}
+
+.button {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--gold-soft);
+  color: var(--gold);
+  font-family: 'Italiana', serif;
+  font-size: 14px;
+  letter-spacing: 4px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 16px;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.message {
+  text-align: center;
+  margin-top: 24px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 13px;
+  min-height: 20px;
+}
+
+.message.error {
+  color: var(--error);
+}
+
+.message.success {
+  color: var(--gold);
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.scientia {
+  font-family: 'Italiana', serif;
+  font-style: italic;
+  letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="brand">
+    <div class="brand-title">FPS</div>
+    <div class="brand-subtitle">Flex Perspective School</div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <form id="loginForm">
+    <div class="form-group">
+      <label class="form-label">Member ID</label>
+      <input type="text" id="memberId" class="form-input" autocomplete="username" required>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="password" class="form-input" autocomplete="current-password" required>
+    </div>
+    
+    <button type="submit" class="button" id="submitBtn">ENTER</button>
+  </form>
+  
+  <div class="message" id="message"></div>
+  
+  <div class="footer">
+    <span class="scientia">Scientia Est Arma</span>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyz2ir2oChyRfwIKPRDcpnwnRkKpYmQ8wuFSpXQe3IDzu5LQOeplUA7fbaFBEYfIV2Jvg/exec';
+
+const form = document.getElementById('loginForm');
+const submitBtn = document.getElementById('submitBtn');
+const message = document.getElementById('message');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const memberId = document.getElementById('memberId').value.trim();
+  const password = document.getElementById('password').value;
+  
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'AUTHENTICATING...';
+  message.className = 'message';
+  message.textContent = '';
+  
+  try {
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'login',
+        member_id: memberId,
+        password: password
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      sessionStorage.setItem('fps_token', data.token);
+      sessionStorage.setItem('fps_nickname', data.nickname);
+      
+      message.className = 'message success';
+      message.textContent = `Welcome, ${data.nickname}.`;
+      
+      // 1.5秒後にメンバーページへ
+      setTimeout(() => {
+        window.location.href = 'members.html';
+      }, 1500);
+    } else {
+      message.className = 'message error';
+      message.textContent = translateError(data.error);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'ENTER';
+    }
+  } catch (err) {
+    message.className = 'message error';
+    message.textContent = '通信エラーが発生しました';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'ENTER';
+    console.error(err);
+  }
+});
+
+function translateError(errorCode) {
+  const map = {
+    'invalid_credentials': 'IDまたはパスワードが正しくありません',
+    'account_inactive': 'このアカウントは現在利用できません',
+    'account_expired': 'アカウントの有効期限が切れています',
+    'no_token': 'セッションが無効です',
+    'token_expired': 'セッションの有効期限が切れています',
+    'invalid_token': '無効なセッションです'
+  };
+  return map[errorCode] || '認証に失敗しました';
+}
+</script>
+
+</body>
+</html>
