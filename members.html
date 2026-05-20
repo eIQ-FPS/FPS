@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知識の森 / Knowledge Forest — FPS Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Shippori+Mincho:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0e;
+      --bg-2: #14141c;
+      --panel: rgba(20, 20, 28, 0.92);
+      --panel-soft: rgba(20, 20, 28, 0.68);
+      --line: rgba(184, 154, 106, 0.18);
+      --line-strong: rgba(184, 154, 106, 0.42);
+      --text: #e8e6e1;
+      --muted: #8a8780;
+      --accent: #8a7349;
+      --accent-light: #b89a6a;
+      --node: #1a1a24;
+      --node-active: #28283a;
+      --edge: rgba(184, 154, 106, 0.36);
+      --edge-active: rgba(184, 154, 106, 0.72);
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.42);
+      --radius: 6px;
+      --transition: 180ms ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at top, #16161e 0%, var(--bg) 38%, #050507 100%);
+      color: var(--text);
+      font-family: 'Shippori Mincho', 'Cormorant Garamond', serif;
+      font-weight: 300;
+      overflow: hidden;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    /* ===== Loading Screen ===== */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.6s;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .loading-title {
+      font-family: 'Italiana', serif;
+      font-size: 2rem;
+      letter-spacing: 0.3em;
+      color: var(--accent-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+    }
+
+    .loading-spinner {
+      margin-top: 2rem;
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--line);
+      border-top-color: var(--accent-light);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== App Layout ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr 360px;
+      width: 100%;
+      height: 100%;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .panel {
+      background: linear-gradient(to bottom, rgba(26, 26, 36, 0.94), rgba(14, 14, 20, 0.92));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .panel-header h2,
+    .panel-header h3 {
+      margin: 0;
+      font-family: 'Italiana', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      font-weight: 400;
+    }
+
+    .sidebar,
+    .inspector {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .sidebar-content,
+    .inspector-content {
+      padding: 14px;
+      overflow: auto;
+      display: grid;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .hero {
+      display: grid;
+      gap: 6px;
+      padding: 2px 2px 8px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: 'Italiana', 'Shippori Mincho', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .hero .hero-sub {
+      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+    }
+
+    .hero p.desc {
+      margin: 0.5rem 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.78rem;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn,
+    .chip {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.025);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      font-family: 'Shippori Mincho', serif;
+    }
+
+    .btn:hover,
+    .chip:hover {
+      border-color: var(--line-strong);
+      background: rgba(184, 154, 106, 0.08);
+      color: var(--accent-light);
+    }
+
+    .btn.active,
+    .chip.active {
+      background: rgba(184, 154, 106, 0.14);
+      border-color: var(--line-strong);
+      color: var(--accent-light);
+      box-shadow: 0 0 0 1px rgba(184, 154, 106, 0.1) inset;
+    }
+
+    .btn-logout {
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      border-color: rgba(217, 119, 87, 0.3);
+      color: rgba(217, 119, 87, 0.9);
+    }
+
+    .btn-logout:hover {
+      background: rgba(217, 119, 87, 0.1);
+      border-color: rgba(217, 119, 87, 0.5);
+      color: rgba(217, 119, 87, 1);
+    }
+
+    .section {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.018);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .section h3 {
+      margin: 0;
+      font-family: 'Italiana', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    /* User box */
+    .user-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(184, 154, 106, 0.05);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .user-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--accent-light);
+      letter-spacing: 0.08em;
+    }
+
+    /* ===== Graph Canvas ===== */
+    .graph-panel {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(26, 26, 36, 0.88), rgba(8, 8, 14, 0.95));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .graph-toolbar {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: calc(100% - 24px);
+    }
+
+    .graph-toolbar .chip {
+      background: rgba(10, 10, 14, 0.82);
+      backdrop-filter: blur(8px);
+    }
+
+    .graph-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .graph-surface {
+      position: absolute;
+      inset: 0;
+      cursor: grab;
+      background-image:
+        linear-gradient(rgba(184, 154, 106, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 154, 106, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .graph-surface.dragging {
+      cursor: grabbing;
+    }
+
+    .graph-world {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    svg.edges {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .edge-path {
+      fill: none;
+      stroke: var(--edge);
+      stroke-width: 1.5;
+    }
+
+    .edge-path.active {
+      stroke: var(--edge-active);
+      stroke-width: 2.4;
+    }
+
+    /* ===== Knowledge Nodes ===== */
+    .node {
+      position: absolute;
+      min-width: 160px;
+      max-width: 220px;
+      padding: 12px 14px 10px;
+      background: linear-gradient(to bottom, rgba(28, 28, 38, 0.96), rgba(18, 18, 26, 0.94));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      user-select: none;
+      transition: left 220ms ease, top 220ms ease, opacity 180ms ease, filter 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .node:hover {
+      border-color: var(--line-strong);
+      background: linear-gradient(to bottom, rgba(36, 36, 48, 0.98), rgba(22, 22, 32, 0.96));
+    }
+
+    .node.selected {
+      border-color: rgba(184, 154, 106, 0.6);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(184, 154, 106, 0.18) inset;
+      background: linear-gradient(to bottom, rgba(40, 36, 28, 0.98), rgba(24, 22, 18, 0.96));
+    }
+
+    .node.focus-root {
+      border-color: rgba(212, 175, 55, 0.65);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.22) inset;
+    }
+
+    .node.focus-neighbor {
+      border-color: rgba(184, 154, 106, 0.32);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(184, 154, 106, 0.1) inset;
+    }
+
+    .node-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .node-title {
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .node-tag {
+      font-family: 'Italiana', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      background: rgba(184, 154, 106, 0.08);
+      border: 1px solid rgba(184, 154, 106, 0.18);
+      border-radius: 999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .node-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.66rem;
+      color: var(--muted);
+      font-family: 'Italiana', serif;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-card {
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .mini-card:hover {
+      border-color: var(--line-strong);
+      background: rgba(184, 154, 106, 0.06);
+    }
+
+    .mini-card.active {
+      border-color: rgba(184, 154, 106, 0.5);
+      background: rgba(184, 154, 106, 0.1);
+    }
+
+    .mini-card strong {
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .mini-card span {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: 'Italiana', serif;
+      letter-spacing: 0.12em;
+    }
+
+    /* ===== Inspector ===== */
+    .inspector-empty {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.82rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .inspector-title {
+      font-family: 'Italiana', 'Shippori Mincho', serif;
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .inspector-meta {
+      font-size: 0.7rem;
+      color: var(--accent);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: 'Italiana', serif;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .inspector-body {
+      line-height: 1.85;
+      color: var(--text);
+      white-space: pre-wrap;
+      font-size: 0.85rem;
+      font-family: 'Shippori Mincho', serif;
+    }
+
+    .inspector-body h1,
+    .inspector-body h2,
+    .inspector-body h3 {
+      font-family: 'Italiana', serif;
+      color: var(--accent-light);
+      letter-spacing: 0.08em;
+      margin-top: 1.2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .inspector-body h1 { font-size: 1.1rem; }
+    .inspector-body h2 { font-size: 1rem; }
+    .inspector-body h3 { font-size: 0.92rem; }
+
+    .inspector-loading {
+      color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .relation-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .relation-item {
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .relation-item:hover {
+      border-color: var(--line-strong);
+      background: rgba(184, 154, 106, 0.06);
+    }
+
+    .relation-item strong {
+      font-size: 0.82rem;
+      color: var(--text);
+      font-family: 'Shippori Mincho', serif;
+    }
+
+    .relation-item span {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: 'Italiana', serif;
+      letter-spacing: 0.12em;
+    }
+
+    .status {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      z-index: 10;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(10, 10, 14, 0.85);
+      border: 1px solid var(--line);
+      font-family: 'Italiana', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .help {
+      font-size: 0.74rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+    }
+
+    .error-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 12px 24px;
+      background: rgba(217, 119, 87, 0.15);
+      border: 1px solid rgba(217, 119, 87, 0.4);
+      border-radius: var(--radius);
+      color: rgba(217, 119, 87, 0.95);
+      font-size: 0.85rem;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 260px 1fr;
+        grid-template-rows: 1fr 240px;
+      }
+      .inspector {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 240px 1fr 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-title">FPS</div>
+      <div class="loading-sub">— 知識の森 —</div>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="panel sidebar">
+      <div class="panel-header">
+        <h2>知識の森</h2>
+        <button class="btn btn-logout" id="logoutBtn" type="button">Logout</button>
+      </div>
+      <div class="sidebar-content">
+        <section class="hero">
+          <h1>Knowledge Forest</h1>
+          <p class="hero-sub">— Scientia Est Arma —</p>
+          <p class="desc">FPS会員専用の知識ベース。ノードをクリックすると詳細が表示される。関連はリンクで辿れる。</p>
+        </section>
+
+        <div class="user-box">
+          <span class="user-name" id="userName">―</span>
+        </div>
+
+        <section class="section">
+          <h3>視点</h3>
+          <div class="view-toggle">
+            <button class="btn active" id="overviewBtn" type="button">全体視点</button>
+            <button class="btn" id="focusBtn" type="button">一人称視点</button>
+          </div>
+          <div class="help">全体視点ではネットワーク全体を俯瞰。一人称視点では選択ノード中心に関連知識だけを強調する。</div>
+        </section>
+
+        <section class="section">
+          <h3>最近のノート</h3>
+          <div class="mini-list" id="recentList"></div>
+        </section>
+      </div>
+    </aside>
+
+    <main class="graph-panel">
+      <div class="graph-toolbar">
+        <button class="chip active" type="button" data-filter="all">すべて</button>
+      </div>
+      <div class="status" id="statusText">全体視点</div>
+      <div class="graph-wrap">
+        <div class="graph-surface" id="graphSurface">
+          <div class="graph-world" id="graphWorld">
+            <svg class="edges" id="edgeLayer"></svg>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="panel inspector">
+      <div class="panel-header">
+        <h3>Inspector</h3>
+      </div>
+      <div class="inspector-content" id="inspectorContent">
+        <div class="inspector-empty">
+          ノードを選ぶと詳細がここに表示される。<br>
+          全体視点はネットワークの俯瞰、<br>
+          一人称視点は関連知識への没入。
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // ==========================================
+    // FPS Knowledge Forest - Member Viewer
+    // ==========================================
+
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyz2ir2oChyRfwIKPRDcpnwnRkKpYmQ8wuFSpXQe3IDzu5LQOeplUA7fbaFBEYfIV2Jvg/exec';
+
+    // ===== Auth Check =====
+    const token = sessionStorage.getItem('fps_token');
+    const nickname = sessionStorage.getItem('fps_nickname');
+
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // ===== State =====
+    const state = {
+      nodes: [],
+      edges: [],
+      selectedNodeId: null,
+      selectedEdgeId: null,
+      viewMode: 'overview',
+      filter: 'all',
+      tags: new Set(),
+      panX: 0,
+      panY: 0,
+      scale: 1,
+      dragNodeId: null,
+      dragOffsetX: 0,
+      dragOffsetY: 0,
+      isPanning: false,
+      panStartX: 0,
+      panStartY: 0,
+      contentCache: {} // fileId -> content
+    };
+
+    // ===== DOM =====
+    const loadingScreen = document.getElementById('loadingScreen');
+    const graphSurface = document.getElementById('graphSurface');
+    const graphWorld = document.getElementById('graphWorld');
+    const edgeLayer = document.getElementById('edgeLayer');
+    const inspectorContent = document.getElementById('inspectorContent');
+    const statusText = document.getElementById('statusText');
+    const recentList = document.getElementById('recentList');
+    const overviewBtn = document.getElementById('overviewBtn');
+    const focusBtn = document.getElementById('focusBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userName = document.getElementById('userName');
+    const graphToolbar = document.querySelector('.graph-toolbar');
+
+    userName.textContent = nickname || 'Member';
+
+    // ===== API =====
+    async function apiGet(action, params = {}) {
+      const url = new URL(GAS_URL);
+      url.searchParams.set('action', action);
+      url.searchParams.set('token', token);
+      Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+      
+      const res = await fetch(url);
+      return await res.json();
+    }
+
+    async function loadGraph() {
+      try {
+        const result = await apiGet('graph');
+        if (!result.success) {
+          if (result.error === 'token_expired' || result.error === 'invalid_token' || result.error === 'no_token') {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+            return;
+          }
+          showError('グラフの読み込みに失敗しました');
+          return;
+        }
+        
+        ingestGraph(result.nodes, result.edges);
+        buildTagFilters();
+        autoLayout();
+        render();
+        hideLoading();
+      } catch (err) {
+        showError('通信エラーが発生しました');
+        console.error(err);
+      }
+    }
+
+    async function loadNoteContent(fileId) {
+      if (state.contentCache[fileId]) {
+        return state.contentCache[fileId];
+      }
+      try {
+        const result = await apiGet('content', { fileId });
+        if (result.success) {
+          state.contentCache[fileId] = result;
+          return result;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      return null;
+    }
+
+    function ingestGraph(rawNodes, rawEdges) {
+      state.nodes = rawNodes.map(n => ({
+        id: n.id,
+        title: n.label,
+        tags: n.tags || [],
+        category: n.category || '',
+        x: 0,
+        y: 0
+      }));
+      
+      state.edges = rawEdges.map((e, i) => ({
+        id: `e${i}`,
+        from: e.from,
+        to: e.to
+      }));
+
+      // Collect all tags
+      state.tags = new Set();
+      state.nodes.forEach(n => {
+        n.tags.forEach(t => state.tags.add(t));
+        if (n.category) state.tags.add(n.category);
+      });
+    }
+
+    function buildTagFilters() {
+      graphToolbar.innerHTML = '';
+      
+      const allBtn = document.createElement('button');
+      allBtn.className = 'chip active';
+      allBtn.type = 'button';
+      allBtn.dataset.filter = 'all';
+      allBtn.textContent = 'すべて';
+      allBtn.addEventListener('click', () => setFilter('all'));
+      graphToolbar.appendChild(allBtn);
+
+      [...state.tags].slice(0, 8).forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.type = 'button';
+        btn.dataset.filter = tag;
+        btn.textContent = tag;
+        btn.addEventListener('click', () => setFilter(tag));
+        graphToolbar.appendChild(btn);
+      });
+    }
+
+    function autoLayout() {
+      // Simple force-like layout: arrange in circle with category clusters
+      const categories = {};
+      state.nodes.forEach(n => {
+        const key = n.category || 'other';
+        if (!categories[key]) categories[key] = [];
+        categories[key].push(n);
+      });
+
+      const categoryKeys = Object.keys(categories);
+      const clusterRadius = 350;
+      const centerX = 500;
+      const centerY = 360;
+
+      categoryKeys.forEach((cat, catIdx) => {
+        const angle = (catIdx / categoryKeys.length) * Math.PI * 2;
+        const cx = centerX + Math.cos(angle) * clusterRadius;
+        const cy = centerY + Math.sin(angle) * clusterRadius;
+        const nodes = categories[cat];
+        const innerRadius = Math.max(60, nodes.length * 25);
+        
+        nodes.forEach((n, i) => {
+          const a = (i / nodes.length) * Math.PI * 2;
+          n.x = cx + Math.cos(a) * innerRadius;
+          n.y = cy + Math.sin(a) * innerRadius;
+        });
+      });
+    }
+
+    // ===== Helpers =====
+    function getNodeById(id) {
+      return state.nodes.find(n => n.id === id) || null;
+    }
+
+    function getVisibleNodes() {
+      if (state.filter === 'all') return state.nodes;
+      return state.nodes.filter(n => 
+        n.tags.includes(state.filter) || n.category === state.filter
+      );
+    }
+
+    function getVisibleNodeIds() {
+      return new Set(getVisibleNodes().map(n => n.id));
+    }
+
+    function getVisibleEdges() {
+      const ids = getVisibleNodeIds();
+      return state.edges.filter(e => ids.has(e.from) && ids.has(e.to));
+    }
+
+    function getNeighbors(nodeId) {
+      const neighbors = new Set();
+      state.edges.forEach(e => {
+        if (e.from === nodeId) neighbors.add(e.to);
+        if (e.to === nodeId) neighbors.add(e.from);
+      });
+      return neighbors;
+    }
+
+    function getDisplayPosition(node, focusRoot, neighbors, indexMap) {
+      if (state.viewMode !== 'focus' || !focusRoot) {
+        return { x: node.x, y: node.y, role: 'overview' };
+      }
+
+      const rect = graphSurface.getBoundingClientRect();
+      const centerX = (rect.width * 0.5 - state.panX) / state.scale;
+      const centerY = (rect.height * 0.48 - state.panY) / state.scale;
+
+      if (node.id === focusRoot) {
+        return { x: centerX, y: centerY, role: 'root' };
+      }
+
+      const neighborList = [...neighbors];
+      const neighborIndex = neighborList.indexOf(node.id);
+
+      if (neighborIndex !== -1) {
+        const total = Math.max(neighborList.length, 1);
+        const radiusX = 280 / state.scale;
+        const radiusY = 180 / state.scale;
+        const angle = (-Math.PI / 2) + (neighborIndex / total) * Math.PI * 2;
+        return {
+          x: centerX + Math.cos(angle) * radiusX,
+          y: centerY + Math.sin(angle) * radiusY,
+          role: 'neighbor'
+        };
+      }
+
+      const fallbackIndex = indexMap.get(node.id) ?? 0;
+      const side = fallbackIndex % 2 === 0 ? -1 : 1;
+      const row = Math.floor(fallbackIndex / 2);
+
+      return {
+        x: centerX + side * (440 / state.scale),
+        y: centerY + ((row - 1.5) * 90) / state.scale,
+        role: 'far'
+      };
+    }
+
+    function setViewMode(mode) {
+      state.viewMode = mode;
+      overviewBtn.classList.toggle('active', mode === 'overview');
+      focusBtn.classList.toggle('active', mode === 'focus');
+      statusText.textContent = mode === 'overview' ? '全体視点' : '一人称視点';
+      if (mode === 'focus' && !state.selectedNodeId && state.nodes.length > 0) {
+        state.selectedNodeId = state.nodes[0].id;
+      }
+      render();
+    }
+
+    function setFilter(filter) {
+      state.filter = filter;
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      render();
+    }
+
+    function applyWorldTransform() {
+      graphWorld.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
+    }
+
+    // ===== Rendering =====
+    function renderEdges() {
+      const visibleEdges = getVisibleEdges();
+      const nodesById = new Map(state.nodes.map(n => [n.id, n]));
+      edgeLayer.innerHTML = '';
+
+      edgeLayer.setAttribute('width', graphSurface.clientWidth);
+      edgeLayer.setAttribute('height', graphSurface.clientHeight);
+
+      visibleEdges.forEach(edge => {
+        const from = nodesById.get(edge.from);
+        const to = nodesById.get(edge.to);
+        if (!from || !to) return;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const dx = to.x - from.x;
+        const c1x = from.x + dx * 0.33;
+        const c2x = from.x + dx * 0.66;
+        const d = `M ${from.x} ${from.y} C ${c1x} ${from.y}, ${c2x} ${to.y}, ${to.x} ${to.y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('class', `edge-path${state.selectedNodeId && (edge.from === state.selectedNodeId || edge.to === state.selectedNodeId) ? ' active' : ''}`);
+        edgeLayer.appendChild(path);
+      });
+    }
+
+    function renderNodes() {
+      const visibleNodes = getVisibleNodes();
+      const focusRoot = state.viewMode === 'focus' ? state.selectedNodeId : null;
+      const neighbors = focusRoot ? getNeighbors(focusRoot) : new Set();
+      const farNodes = visibleNodes.filter(n => n.id !== focusRoot && !neighbors.has(n.id));
+      const farIndexMap = new Map(farNodes.map((n, i) => [n.id, i]));
+
+      graphWorld.querySelectorAll('.node').forEach(n => n.remove());
+
+      visibleNodes.forEach(node => {
+        const pos = getDisplayPosition(node, focusRoot, neighbors, farIndexMap);
+        const nodeEl = document.createElement('article');
+        let classes = 'node';
+        if (state.selectedNodeId === node.id) classes += ' selected';
+        if (focusRoot === node.id) classes += ' focus-root';
+        if (focusRoot && pos.role === 'neighbor') classes += ' focus-neighbor';
+        nodeEl.className = classes;
+        nodeEl.style.left = `${pos.x}px`;
+        nodeEl.style.top = `${pos.y}px`;
+
+        if (focusRoot && pos.role === 'far') {
+          nodeEl.style.opacity = '0.16';
+          nodeEl.style.filter = 'blur(1.4px) saturate(0.7)';
+        } else if (focusRoot && pos.role === 'neighbor') {
+          nodeEl.style.opacity = '0.94';
+          nodeEl.style.filter = 'none';
+        } else if (focusRoot && pos.role === 'root') {
+          nodeEl.style.opacity = '1';
+          nodeEl.style.filter = 'none';
+        }
+
+        const firstTag = node.category || (node.tags[0] || '');
+        const tagHtml = firstTag ? `<span class="node-tag">${escapeHtml(firstTag)}</span>` : '';
+
+        nodeEl.innerHTML = `
+          <div class="node-head">
+            <div class="node-title">${escapeHtml(node.title)}</div>
+            ${tagHtml}
+          </div>
+          <div class="node-meta">
+            <span>${escapeHtml(node.tags.slice(0, 2).join(' · '))}</span>
+          </div>
+        `;
+
+        nodeEl.addEventListener('pointerdown', (event) => {
+          state.dragNodeId = node.id;
+          state.dragOffsetX = event.clientX - (pos.x * state.scale + state.panX);
+          state.dragOffsetY = event.clientY - (pos.y * state.scale + state.panY);
+          state.selectedNodeId = node.id;
+          state.selectedEdgeId = null;
+          renderInspector();
+          render();
+        });
+
+        nodeEl.addEventListener('click', (event) => {
+          event.stopPropagation();
+          state.selectedNodeId = node.id;
+          state.selectedEdgeId = null;
+          renderInspector();
+          render();
+        });
+
+        graphWorld.appendChild(nodeEl);
+      });
+    }
+
+    function renderRecentList() {
+      const nodes = [...state.nodes].slice(-8).reverse();
+      recentList.innerHTML = '';
+      nodes.forEach(node => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `mini-card${state.selectedNodeId === node.id ? ' active' : ''}`;
+        card.innerHTML = `
+          <strong>${escapeHtml(node.title)}</strong>
+          <span>${escapeHtml(node.category || node.tags.join(' · '))}</span>
+        `;
+        card.addEventListener('click', () => {
+          state.selectedNodeId = node.id;
+          state.selectedEdgeId = null;
+          renderInspector();
+          render();
+        });
+        recentList.appendChild(card);
+      });
+    }
+
+    async function renderInspector() {
+      inspectorContent.innerHTML = '';
+
+      const node = getNodeById(state.selectedNodeId);
+      if (!node) {
+        inspectorContent.innerHTML = '<div class="inspector-empty">ノードを選ぶと詳細がここに表示される。<br>全体視点はネットワークの俯瞰、<br>一人称視点は関連知識への没入。</div>';
+        return;
+      }
+
+      // Header (immediate)
+      const header = document.createElement('section');
+      header.className = 'section';
+      header.innerHTML = `
+        <h4 class="inspector-title">${escapeHtml(node.title)}</h4>
+        <div class="inspector-meta">
+          ${node.category ? `<span>${escapeHtml(node.category)}</span>` : ''}
+          ${node.tags.length ? `<span>${escapeHtml(node.tags.join(' · '))}</span>` : ''}
+        </div>
+        <div class="inspector-body" id="bodyContent">
+          <div class="inspector-loading">— 読み込み中 —</div>
+        </div>
+      `;
+      inspectorContent.appendChild(header);
+
+      // Relations
+      const relations = state.edges.filter(e => e.from === node.id || e.to === node.id);
+      if (relations.length > 0) {
+        const relWrap = document.createElement('section');
+        relWrap.className = 'section';
+        relWrap.innerHTML = '<h3>関連</h3>';
+        const relList = document.createElement('div');
+        relList.className = 'relation-list';
+        relations.forEach(edge => {
+          const otherId = edge.from === node.id ? edge.to : edge.from;
+          const otherNode = getNodeById(otherId);
+          if (!otherNode) return;
+          const item = document.createElement('div');
+          item.className = 'relation-item';
+          item.innerHTML = `
+            <strong>${escapeHtml(otherNode.title)}</strong>
+            <span>${escapeHtml(otherNode.category || '')}</span>
+          `;
+          item.addEventListener('click', () => {
+            state.selectedNodeId = otherNode.id;
+            renderInspector();
+            render();
+          });
+          relList.appendChild(item);
+        });
+        relWrap.appendChild(relList);
+        inspectorContent.appendChild(relWrap);
+      }
+
+      // Load content (async)
+      const content = await loadNoteContent(node.id);
+      const bodyEl = document.getElementById('bodyContent');
+      if (bodyEl && content) {
+        bodyEl.innerHTML = renderMarkdown(stripFrontmatter(content.content));
+      } else if (bodyEl) {
+        bodyEl.innerHTML = '<div class="inspector-empty">本文の取得に失敗しました</div>';
+      }
+    }
+
+    function render() {
+      applyWorldTransform();
+      renderEdges();
+      renderNodes();
+      renderRecentList();
+      graphSurface.classList.toggle('dragging', state.isPanning);
+    }
+
+    // ===== Markdown (minimal) =====
+    function stripFrontmatter(content) {
+      return content.replace(/^---\n[\s\S]*?\n---\n*/, '');
+    }
+
+    function renderMarkdown(md) {
+      // Minimal markdown rendering
+      let html = escapeHtml(md);
+      // Headers
+      html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+      // Bold
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      // Internal links [[xxx]]
+      html = html.replace(/\[\[([^\]]+)\]\]/g, '<span style="color: var(--accent-light); font-style: italic;">$1</span>');
+      // Line breaks
+      html = html.replace(/\n\n/g, '</p><p>');
+      html = '<p>' + html + '</p>';
+      // Clean up
+      html = html.replace(/<p><h([123])>/g, '<h$1>');
+      html = html.replace(/<\/h([123])><\/p>/g, '</h$1>');
+      return html;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function hideLoading() {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => loadingScreen.style.display = 'none', 600);
+    }
+
+    function showError(msg) {
+      const banner = document.createElement('div');
+      banner.className = 'error-banner';
+      banner.textContent = msg;
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 5000);
+    }
+
+    // ===== Input Handlers =====
+    graphSurface.addEventListener('pointerdown', (event) => {
+      if (event.target !== graphSurface && event.target !== graphWorld) return;
+      state.isPanning = true;
+      state.panStartX = event.clientX - state.panX;
+      state.panStartY = event.clientY - state.panY;
+      render();
+    });
+
+    window.addEventListener('pointermove', (event) => {
+      if (state.dragNodeId) {
+        const node = getNodeById(state.dragNodeId);
+        if (!node) return;
+        if (state.viewMode === 'overview') {
+          node.x = (event.clientX - state.dragOffsetX - state.panX) / state.scale;
+          node.y = (event.clientY - state.dragOffsetY - state.panY) / state.scale;
+        }
+        render();
+        return;
+      }
+      if (state.isPanning) {
+        state.panX = event.clientX - state.panStartX;
+        state.panY = event.clientY - state.panStartY;
+        applyWorldTransform();
+        renderEdges();
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      state.dragNodeId = null;
+      state.isPanning = false;
+      render();
+    });
+
+    graphSurface.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      const delta = event.deltaY < 0 ? 1.08 : 0.92;
+      const nextScale = Math.min(1.8, Math.max(0.48, state.scale * delta));
+      const rect = graphSurface.getBoundingClientRect();
+      const pointerX = event.clientX - rect.left;
+      const pointerY = event.clientY - rect.top;
+      const worldX = (pointerX - state.panX) / state.scale;
+      const worldY = (pointerY - state.panY) / state.scale;
+      state.scale = nextScale;
+      state.panX = pointerX - worldX * state.scale;
+      state.panY = pointerY - worldY * state.scale;
+      render();
+    }, { passive: false });
+
+    overviewBtn.addEventListener('click', () => setViewMode('overview'));
+    focusBtn.addEventListener('click', () => setViewMode('focus'));
+
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('ログアウトしますか?')) {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      }
+    });
+
+    graphSurface.addEventListener('click', () => {
+      state.selectedNodeId = null;
+      state.selectedEdgeId = null;
+      renderInspector();
+      render();
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key.toLowerCase() === 'f' && !event.target.matches('input, textarea')) {
+        setViewMode(state.viewMode === 'overview' ? 'focus' : 'overview');
+      }
+      if (event.key === 'Escape') {
+        state.selectedNodeId = null;
+        state.selectedEdgeId = null;
+        renderInspector();
+        render();
+      }
+    });
+
+    // ===== Init =====
+    loadGraph();
+  </script>
+</body>
+</html>
