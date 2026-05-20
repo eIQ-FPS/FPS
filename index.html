@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FPS学院 — Scientia Est Arma | AIに話しかけるだけで、作れる時代へ</title>
-<meta name="description" content="FPS学院 - Flex Perspective School。AIに話しかけるだけでアプリが作れる「バイブスコーディング」を中心に、思考力・創造力・AI活用力を育む教育の場。">
+<title>FPS学院 — Scientia Est Arma | AIに託しかけるだけで、作れる時代へ</title>
+<meta name="description" content="FPS学院 - Flex Perspective School。AIに託しかけるだけでアプリが作れる「バイブスコーディング」を中心に、思考力・創造力・AI活用力を育む教育の場。">
 <link rel="icon" type="image/png" href="./logo-fps.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,6 +87,22 @@
   }
 
   .nav-links a:hover { opacity: 1; color: var(--accent-light); }
+
+  .nav-link-member {
+    font-family: 'Italiana', serif !important;
+    font-style: italic;
+    color: var(--accent-light) !important;
+    border-left: 1px solid rgba(138,115,73,0.3);
+    padding-left: 1.6rem;
+    margin-left: 0.6rem;
+    letter-spacing: 0.25em !important;
+    opacity: 0.85 !important;
+  }
+
+  .nav-link-member:hover {
+    opacity: 1 !important;
+    color: var(--white) !important;
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -771,6 +787,11 @@
     .nav-links { gap: 1rem; }
     .nav-links a { font-size: 0.65rem; }
     .nav-logo-text { display: none; }
+    .nav-link-member {
+      border-left: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
     .vibe, .terminal-section, .features { padding: 5rem 1.2rem; }
     .courses, .cta-section { padding: 5rem 1.2rem; }
     .vibe-steps { grid-template-columns: 1fr; }
@@ -795,6 +816,7 @@
     <li><a href="#courses">コース</a></li>
     <li><a href="#features">特徴</a></li>
     <li><a href="#trial">体験予約</a></li>
+    <li><a href="login.html" class="nav-link-member">Member</a></li>
   </ul>
 </nav>
 
@@ -807,7 +829,7 @@
     <p class="hero-motto-jp">知 識 は 武 器 で あ る</p>
 
     <h1 class="hero-title">
-      <em>AIに話しかけるだけで、</em><br>
+      <em>AIに託しかけるだけで、</em><br>
       作れる時代が来た。<br>
       <strong>あなたの想像力を、<br>武器に変える場所。</strong>
     </h1>
@@ -835,7 +857,7 @@
 
 <!-- ===== ORNAMENTAL DIVIDER ===== -->
 <div class="ornamental-divider">
-  <span class="ornamental-symbol">✦ ✦ ✦</span>
+  <span class="ornamental-symbol">❦ ✦ ❦</span>
 </div>
 
 <!-- ===== VIBE CODING ===== -->
@@ -848,7 +870,7 @@
     </h2>
   </div>
   <p class="vibe-desc">
-    バイブスコーディングとは、AIに話しかけながらアプリやツールを作っていくスタイル。
+    バイブスコーディングとは、AIに託しかけながらアプリやツールを作っていくスタイル。
     コードを1行も書かなくていい。アイデアと言葉があれば、今日中に動くものが生まれます。
     FPS学院では、この「作れた」という体験を全員に届けることから始めます。
   </p>
@@ -893,9 +915,9 @@
       <br>
       <p class="t-code">// → 5分後、動くアプリが完成</p>
       <br>
-      <p class="t-output">✓ サーバー代：¥0<br>
-      ✓ コード量：0行（あなたが書いた分）<br>
-      ✓ 所要時間：今日中</p>
+      <p class="t-output">✓ サーバー代:¥0<br>
+      ✓ コード量:0行(あなたが書いた分)<br>
+      ✓ 所要時間:今日中</p>
       <br>
       <p class="t-user">あなた &gt; <span class="cursor"></span></p>
     </div>
@@ -997,7 +1019,7 @@
       <img src="./emblem.png" alt="">
     </div>
     <h2 class="cta-title">
-      まず、30分だけ<em>試してみてください。</em>
+      まず、30分だけ<em>話してみてください。</em>
     </h2>
     <p class="cta-sub">
       体験セッションは60分。SNS運用から芸術まで、多種多様なテーマで対応できます。<br>
