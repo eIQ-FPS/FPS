@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FPS学院 — 会員登録</title>
-<meta name="description" content="FPS学院 会員登録ページ">
+<title>FPS学院 — ご入会ありがとうございます</title>
+<meta name="description" content="FPS学院へのご入会、誠にありがとうございます。">
 <link rel="icon" type="image/png" href="./logo-fps.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,11 +24,10 @@
   --text-dim: #8a8780;
   --text-faint: #5a5852;
   --border: rgba(212, 175, 55, 0.15);
-  --error: #d97757;
-  --success: #7eb8a4;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -48,6 +47,7 @@ body {
   overflow-x: hidden;
 }
 
+/* 微細なノイズテクスチャ */
 body::before {
   content: '';
   position: fixed;
@@ -60,12 +60,14 @@ body::before {
 
 .container {
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 64px 52px 48px;
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 55, 0.05);
+  padding: 72px 56px 56px;
+  box-shadow:
+    0 0 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(212, 175, 55, 0.05);
   position: relative;
   z-index: 2;
   animation: containerRise 0.9s cubic-bezier(0.16, 1, 0.3, 1);
@@ -79,120 +81,347 @@ body::before {
   background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
 }
 
-@keyframes containerRise {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.container::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
 }
 
-/* Brand */
-.brand { text-align: center; margin-bottom: 36px; opacity: 0; animation: fadeUp 0.8s ease-out 0.2s forwards; }
+@keyframes containerRise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Brand ===== */
+.brand {
+  text-align: center;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease-out 0.2s forwards;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--gold-soft);
+  border-radius: 50%;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.brand-mark::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+}
+
+.brand-mark-inner {
+  font-family: 'Italiana', serif;
+  font-size: 22px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
 .brand-title {
   font-family: 'Italiana', serif;
-  font-size: 38px; font-weight: 400; letter-spacing: 6px;
-  color: var(--gold); margin-bottom: 10px;
+  font-size: 38px;
+  font-weight: 400;
+  letter-spacing: 6px;
+  color: var(--gold);
+  margin-bottom: 12px;
 }
+
 .brand-subtitle {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 14px; color: var(--text-dim); letter-spacing: 2px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
 }
 
-/* Ornament */
+/* ===== Divider ===== */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin: 36px 0;
+}
+
 .divider-ornament {
-  display: flex; align-items: center; justify-content: center;
-  margin: 28px 0; gap: 16px;
-  opacity: 0; animation: fadeUp 0.8s ease-out 0.3s forwards;
-}
-.divider-ornament .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
-.divider-ornament .ornament { color: var(--gold-soft); font-family: 'Italiana', serif; font-size: 14px; }
-
-/* Intro */
-.intro { text-align: center; margin-bottom: 36px; opacity: 0; animation: fadeUp 0.8s ease-out 0.4s forwards; }
-.intro-heading {
-  font-family: 'Shippori Mincho', serif; font-weight: 400; font-size: 20px;
-  color: var(--text-primary); line-height: 1.6; letter-spacing: 0.06em; margin-bottom: 12px;
-}
-.intro-heading .accent { color: var(--gold); font-weight: 500; }
-.intro-sub {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 15px; color: var(--text-dim); line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 36px 0;
+  gap: 16px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease-out 0.35s forwards;
 }
 
-/* Form */
-.form { opacity: 0; animation: fadeUp 0.8s ease-out 0.5s forwards; }
-.form-group { margin-bottom: 22px; }
-.form-label {
-  display: block; font-family: 'Shippori Mincho', serif; font-size: 12px;
-  color: var(--text-dim); letter-spacing: 1px; margin-bottom: 8px;
+.divider-ornament .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
 }
-.form-label .req { color: var(--gold-soft); margin-left: 4px; }
-.form-label .hint { color: var(--text-faint); font-size: 11px; margin-left: 8px; }
-.form-input {
-  width: 100%; background: transparent; border: none;
-  border-bottom: 1px solid var(--border); color: var(--text-primary);
-  font-family: 'Shippori Mincho', serif; font-size: 16px; padding: 10px 0;
-  outline: none; transition: border-color 0.3s;
-}
-.form-input:focus { border-bottom-color: var(--gold); }
-.form-input::placeholder { color: var(--text-faint); font-style: italic; }
 
-.field-status {
-  font-family: 'Shippori Mincho', serif; font-size: 11px;
-  margin-top: 6px; min-height: 14px; letter-spacing: 0.5px;
+.divider-ornament .ornament {
+  color: var(--gold-soft);
+  font-family: 'Italiana', serif;
+  font-size: 14px;
+  letter-spacing: 4px;
 }
-.field-status.checking { color: var(--text-dim); }
-.field-status.ok { color: var(--success); }
-.field-status.ng { color: var(--error); }
 
-/* Button */
+/* ===== Welcome Message ===== */
+.welcome-message {
+  text-align: center;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease-out 0.4s forwards;
+}
+
+.welcome-heading {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.welcome-heading .accent {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.welcome-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+
+/* ===== Steps ===== */
+.steps {
+  margin: 48px 0 40px;
+}
+
+.steps-title {
+  font-family: 'Italiana', serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 0.55s forwards;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--gold-faint);
+  opacity: 0;
+}
+
+.step:last-child {
+  border-bottom: none;
+}
+
+.step:nth-child(2) { animation: fadeUp 0.6s ease-out 0.7s forwards; }
+.step:nth-child(3) { animation: fadeUp 0.6s ease-out 0.85s forwards; }
+.step:nth-child(4) { animation: fadeUp 0.6s ease-out 1.0s forwards; }
+
+.step-number {
+  font-family: 'Italiana', serif;
+  font-size: 22px;
+  color: var(--gold);
+  min-width: 40px;
+  line-height: 1;
+  padding-top: 2px;
+  letter-spacing: 0.05em;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-label {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.step-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+.step-desc em {
+  color: var(--gold-soft);
+  font-style: italic;
+}
+
+/* ===== Buttons ===== */
+.actions {
+  margin-top: 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 1.15s forwards;
+}
+
 .button {
-  width: 100%; background: transparent; border: 1px solid var(--gold-soft);
-  color: var(--gold); font-family: 'Italiana', serif; font-size: 14px;
-  letter-spacing: 4px; padding: 18px; text-align: center; cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); margin-top: 12px;
-  position: relative; overflow: hidden;
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--gold-soft);
+  color: var(--gold);
+  font-family: 'Italiana', serif;
+  font-size: 14px;
+  letter-spacing: 4px;
+  padding: 18px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
 }
+
 .button::before {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.1), transparent);
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
   transition: left 0.6s ease;
 }
-.button:hover:not(:disabled) { background: var(--gold); color: var(--bg-primary); border-color: var(--gold); }
-.button:hover:not(:disabled)::before { left: 100%; }
-.button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* Message */
-.message {
-  text-align: center; margin-top: 22px; font-family: 'Shippori Mincho', serif;
-  font-size: 13px; min-height: 20px; letter-spacing: 0.5px; line-height: 1.6;
+.button:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+  border-color: var(--gold);
 }
-.message.error { color: var(--error); }
-.message.success { color: var(--success); }
 
-/* Notice */
+.button:hover::before {
+  left: 100%;
+}
+
+.button-secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-dim);
+  font-size: 12px;
+  letter-spacing: 3px;
+  padding: 14px;
+}
+
+.button-secondary:hover {
+  border-color: var(--gold-soft);
+  background: transparent;
+  color: var(--gold);
+}
+
+/* ===== Notice ===== */
 .notice {
-  margin-top: 28px; padding: 16px 18px; background: var(--bg-tertiary);
-  border-left: 2px solid var(--gold-dim); font-family: 'Shippori Mincho', serif;
-  font-size: 12px; color: var(--text-dim); line-height: 1.75; letter-spacing: 0.02em;
-  opacity: 0; animation: fadeUp 0.6s ease-out 0.7s forwards;
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border-left: 2px solid var(--gold-soft);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 1.3s forwards;
 }
 
-/* Footer */
+.notice strong {
+  color: var(--gold-soft);
+  font-weight: 500;
+}
+
+/* ===== Footer ===== */
 .footer {
-  text-align: center; margin-top: 36px; padding-top: 28px;
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 32px;
   border-top: 1px solid var(--gold-faint);
-  opacity: 0; animation: fadeUp 0.6s ease-out 0.8s forwards;
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 1.45s forwards;
 }
-.scientia { font-family: 'Italiana', serif; font-style: italic; font-size: 13px; letter-spacing: 4px; color: var(--gold-soft); margin-bottom: 8px; }
-.footer-meta { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: var(--text-faint); letter-spacing: 2px; }
-.footer-link { color: var(--text-dim); text-decoration: none; border-bottom: 1px solid var(--gold-faint); transition: color 0.3s; }
-.footer-link:hover { color: var(--gold); }
 
-@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.scientia {
+  font-family: 'Italiana', serif;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--gold-soft);
+  margin-bottom: 8px;
+}
 
-@media (max-width: 560px) {
-  .container { padding: 48px 28px 36px; }
-  .brand-title { font-size: 32px; letter-spacing: 4px; }
-  .intro-heading { font-size: 17px; }
+.footer-meta {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .container {
+    padding: 56px 32px 40px;
+  }
+  .brand-title {
+    font-size: 32px;
+    letter-spacing: 4px;
+  }
+  .welcome-heading {
+    font-size: 18px;
+  }
+  .step {
+    gap: 16px;
+  }
+  .step-number {
+    font-size: 20px;
+    min-width: 32px;
+  }
 }
 </style>
 </head>
@@ -200,238 +429,88 @@ body::before {
 
 <div class="container">
 
+  <!-- Brand -->
   <div class="brand">
+    <div class="brand-mark">
+      <span class="brand-mark-inner">F</span>
+    </div>
     <div class="brand-title">FPS</div>
     <div class="brand-subtitle">Flex Perspective School</div>
   </div>
 
+  <!-- Ornament Divider -->
   <div class="divider-ornament">
     <div class="line"></div>
     <div class="ornament">✦</div>
     <div class="line"></div>
   </div>
 
-  <div class="intro">
-    <div class="intro-heading">
+  <!-- Welcome Message -->
+  <div class="welcome-message">
+    <div class="welcome-heading">
       ご入会、<span class="accent">ありがとうございます</span>
     </div>
-    <div class="intro-sub">
-      ログイン用の会員IDとパスワードを<br>設定してください。
+    <div class="welcome-sub">
+      Welcome to FPS.<br>
+      お手続きが完了しました。
     </div>
   </div>
 
-  <!-- 登録フォーム -->
-  <form class="form" id="registerForm">
+  <!-- Steps -->
+  <div class="steps">
+    <div class="steps-title">Next Steps</div>
 
-    <div class="form-group">
-      <label class="form-label">
-        会員ID<span class="req">*</span>
-        <span class="hint">半角英数字・3文字以上（ログインに使います）</span>
-      </label>
-      <input type="text" id="memberId" class="form-input" placeholder="例：eugene_2026" autocomplete="username" required>
-      <div class="field-status" id="idStatus"></div>
+    <div class="step">
+      <div class="step-number">I</div>
+      <div class="step-content">
+        <div class="step-label">メールをご確認ください</div>
+        <div class="step-desc">
+          数分以内に、ご登録のアドレス宛に会員IDと仮パスワードをお送りします。
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">お名前<span class="hint">任意・本名でなくてOK</span></label>
-      <input type="text" id="name" class="form-input" placeholder="例：沼田 勇人" autocomplete="name">
+    <div class="step">
+      <div class="step-number">II</div>
+      <div class="step-content">
+        <div class="step-label">ログイン画面からお入りください</div>
+        <div class="step-desc">
+          メールに記載の会員IDとパスワードでログインできます。
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">ニックネーム<span class="hint">任意・画面に表示される名前</span></label>
-      <input type="text" id="nickname" class="form-input" placeholder="例：Eugene" autocomplete="nickname">
+    <div class="step">
+      <div class="step-number">III</div>
+      <div class="step-content">
+        <div class="step-label">マイペースで学んでください</div>
+        <div class="step-desc">
+          急がず、休まず。気が向いたときに、気が向いた分だけ。
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label class="form-label">パスワード<span class="req">*</span><span class="hint">6文字以上</span></label>
-      <input type="password" id="password" class="form-input" placeholder="••••••" autocomplete="new-password" required>
-    </div>
+  <!-- Actions -->
+  <div class="actions">
+    <a href="./login.html" class="button">ログインページへ</a>
+    <a href="./index.html" class="button button-secondary">ホームに戻る</a>
+  </div>
 
-    <div class="form-group">
-      <label class="form-label">パスワード（確認）<span class="req">*</span></label>
-      <input type="password" id="passwordConfirm" class="form-input" placeholder="••••••" autocomplete="new-password" required>
-      <div class="field-status" id="pwStatus"></div>
-    </div>
-
-    <button type="submit" class="button" id="submitBtn">登録する</button>
-  </form>
-
-  <div class="message" id="message"></div>
-
+  <!-- Notice -->
   <div class="notice">
-    設定した会員IDとパスワードは、次回以降のログインに使います。
-    忘れないようにメモしておいてください。
+    <strong>メールが届かない場合：</strong><br>
+    迷惑メールフォルダをご確認ください。10分経っても届かない場合は、
+    お手数ですが代表（沼田勇人）までご一報ください。
   </div>
 
+  <!-- Footer -->
   <div class="footer">
     <div class="scientia">Scientia Est Arma</div>
-    <div class="footer-meta">
-      <a href="./index.html" class="footer-link">ホームに戻る</a>
-    </div>
+    <div class="footer-meta">FPS ACADEMY · YOKOHAMA</div>
   </div>
 
 </div>
-
-<script>
-// ===== 設定：既存 login.html と同じ GAS URL =====
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyz2ir2oChyRfwIKPRDcpnwnRkKpYmQ8wuFSpXQe3IDzu5LQOeplUA7fbaFBEYfIV2Jvg/exec';
-
-const form = document.getElementById('registerForm');
-const memberIdInput = document.getElementById('memberId');
-const nameInput = document.getElementById('name');
-const nicknameInput = document.getElementById('nickname');
-const passwordInput = document.getElementById('password');
-const passwordConfirmInput = document.getElementById('passwordConfirm');
-const submitBtn = document.getElementById('submitBtn');
-const message = document.getElementById('message');
-const idStatus = document.getElementById('idStatus');
-const pwStatus = document.getElementById('pwStatus');
-
-// Stripe の session_id を URL から取得（あれば記録用に保存）
-const urlParams = new URLSearchParams(window.location.search);
-const stripeSessionId = urlParams.get('session_id') || '';
-
-// 会員IDの重複チェック（入力が止まったら自動チェック）
-let idCheckTimer = null;
-let idAvailable = false;
-
-memberIdInput.addEventListener('input', () => {
-  clearTimeout(idCheckTimer);
-  idAvailable = false;
-  const id = memberIdInput.value.trim();
-
-  if (id.length < 3) {
-    idStatus.className = 'field-status';
-    idStatus.textContent = '';
-    return;
-  }
-  if (!/^[a-zA-Z0-9_]+$/.test(id)) {
-    idStatus.className = 'field-status ng';
-    idStatus.textContent = '半角英数字とアンダースコアのみ使えます';
-    return;
-  }
-
-  idStatus.className = 'field-status checking';
-  idStatus.textContent = '確認中...';
-
-  idCheckTimer = setTimeout(async () => {
-    try {
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'check_id', member_id: id })
-      });
-      const data = await res.json();
-      if (data.available) {
-        idStatus.className = 'field-status ok';
-        idStatus.textContent = '✓ この会員IDは使えます';
-        idAvailable = true;
-      } else {
-        idStatus.className = 'field-status ng';
-        idStatus.textContent = '✕ この会員IDは既に使われています';
-        idAvailable = false;
-      }
-    } catch (err) {
-      idStatus.className = 'field-status';
-      idStatus.textContent = '';
-      console.error(err);
-    }
-  }, 600);
-});
-
-// パスワード確認の一致チェック
-passwordConfirmInput.addEventListener('input', () => {
-  if (passwordConfirmInput.value && passwordInput.value !== passwordConfirmInput.value) {
-    pwStatus.className = 'field-status ng';
-    pwStatus.textContent = 'パスワードが一致しません';
-  } else if (passwordConfirmInput.value) {
-    pwStatus.className = 'field-status ok';
-    pwStatus.textContent = '✓ 一致しました';
-  } else {
-    pwStatus.className = 'field-status';
-    pwStatus.textContent = '';
-  }
-});
-
-// 登録送信
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const memberId = memberIdInput.value.trim();
-  const password = passwordInput.value;
-  const passwordConfirm = passwordConfirmInput.value;
-
-  // クライアント側バリデーション
-  message.className = 'message';
-  message.textContent = '';
-
-  if (memberId.length < 3) {
-    showError('会員IDは3文字以上で入力してください');
-    return;
-  }
-  if (!/^[a-zA-Z0-9_]+$/.test(memberId)) {
-    showError('会員IDは半角英数字とアンダースコアのみ使えます');
-    return;
-  }
-  if (password.length < 6) {
-    showError('パスワードは6文字以上で入力してください');
-    return;
-  }
-  if (password !== passwordConfirm) {
-    showError('パスワードが一致しません');
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = '登録中...';
-
-  try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'register',
-        member_id: memberId,
-        name: nameInput.value.trim(),
-        nickname: nicknameInput.value.trim(),
-        password: password,
-        stripe_id: stripeSessionId
-      })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      message.className = 'message success';
-      message.textContent = '登録が完了しました。ログインページへ移動します...';
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 1800);
-    } else {
-      showError(translateError(data.error));
-      submitBtn.disabled = false;
-      submitBtn.textContent = '登録する';
-    }
-  } catch (err) {
-    showError('通信エラーが発生しました。時間をおいて再度お試しください');
-    submitBtn.disabled = false;
-    submitBtn.textContent = '登録する';
-    console.error(err);
-  }
-});
-
-function showError(msg) {
-  message.className = 'message error';
-  message.textContent = msg;
-}
-
-function translateError(code) {
-  const map = {
-    'missing_fields': '必須項目を入力してください',
-    'id_too_short': '会員IDは3文字以上で入力してください',
-    'password_too_short': 'パスワードは6文字以上で入力してください',
-    'id_taken': 'この会員IDは既に使われています。別のIDをお試しください'
-  };
-  return map[code] || '登録に失敗しました。時間をおいて再度お試しください';
-}
-</script>
 
 </body>
 </html>
