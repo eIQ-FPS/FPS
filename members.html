@@ -709,6 +709,67 @@
     .m-rel:active { border-color: var(--line-strong); }
     .m-rel strong { display:block; font-size:0.95rem; margin-bottom:3px; font-family:'Shippori Mincho',serif; }
     .m-rel span { font-size:0.74rem; color:var(--muted); }
+
+    /* ===== 投稿ボタン & モーダル（共通）===== */
+    .compose-fab {
+      position: fixed; right: 22px; bottom: 22px; z-index: 90;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #0a0a0e;
+      border: none; border-radius: 30px; padding: 14px 22px;
+      font-family: 'Shippori Mincho', serif; font-size: 0.95rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5); cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: transform 180ms, background 180ms;
+    }
+    .compose-fab:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .compose-fab:active { transform: translateY(0); }
+    .compose-fab .plus { font-size: 1.2rem; line-height: 1; }
+
+    .compose-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(5,5,8,0.82); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .compose-overlay.open { display: flex; }
+    .compose-modal {
+      width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+      background: linear-gradient(to bottom, rgba(26,26,36,0.98), rgba(14,14,20,0.98));
+      border: 1px solid var(--line-strong); border-radius: 10px;
+      padding: 28px 26px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .compose-modal h3 {
+      margin: 0 0 6px; font-family: 'Italiana', serif; font-size: 1rem;
+      letter-spacing: 0.2em; color: var(--accent-light); text-transform: uppercase;
+    }
+    .compose-modal .compose-help {
+      font-size: 0.78rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6;
+    }
+    .compose-field { margin-bottom: 16px; }
+    .compose-field label {
+      display: block; font-family: 'Shippori Mincho', serif; font-size: 0.8rem;
+      color: var(--muted); letter-spacing: 0.05em; margin-bottom: 6px;
+    }
+    .compose-field input, .compose-field textarea {
+      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--line);
+      border-radius: 5px; color: var(--text); font-family: 'Shippori Mincho', serif;
+      font-size: 1rem; padding: 11px 13px; outline: none; transition: border-color 0.3s;
+    }
+    .compose-field input:focus, .compose-field textarea:focus { border-color: var(--accent); }
+    .compose-field textarea { resize: vertical; min-height: 200px; line-height: 1.7; font-size: 0.98rem; }
+    .compose-field .sublabel { font-size: 0.72rem; color: var(--muted); margin-left: 6px; }
+    .compose-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .compose-btn {
+      flex: 1; padding: 14px; border-radius: 5px; cursor: pointer;
+      font-family: 'Italiana', serif; font-size: 0.9rem; letter-spacing: 0.15em;
+      -webkit-tap-highlight-color: transparent; transition: all 0.3s;
+    }
+    .compose-btn-submit { background: var(--accent); color: #0a0a0e; border: none; }
+    .compose-btn-submit:hover:not(:disabled) { background: var(--accent-light); }
+    .compose-btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+    .compose-btn-cancel { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+    .compose-btn-cancel:hover { border-color: var(--line-strong); color: var(--text); }
+    .compose-msg { text-align: center; margin-top: 14px; font-size: 0.85rem; min-height: 18px; }
+    .compose-msg.error { color: #d97757; }
+    .compose-msg.success { color: #7eb8a4; }
   </style>
 </head>
 <body>
@@ -799,6 +860,43 @@
       <button class="m-back" id="mBack" type="button">← 一覧へ</button>
     </div>
     <div class="m-article-body" id="mArticleBody"></div>
+  </div>
+
+  <!-- 投稿ボタン（FAB）-->
+  <button class="compose-fab" id="composeFab" type="button">
+    <span class="plus">＋</span> ノートを書く
+  </button>
+
+  <!-- 投稿モーダル -->
+  <div class="compose-overlay" id="composeOverlay">
+    <div class="compose-modal">
+      <h3>ノートを書く</h3>
+      <div class="compose-help">
+        書いたノートは <strong>全会員に共有</strong> されます。<br>
+        学んだこと・気づき・メモを、みんなと分かち合おう。
+      </div>
+
+      <div class="compose-field">
+        <label>タイトル <span class="sublabel">必須</span></label>
+        <input type="text" id="composeTitle" placeholder="例：GASでつまずいたポイント" maxlength="100">
+      </div>
+
+      <div class="compose-field">
+        <label>タグ <span class="sublabel">任意・カンマ区切り</span></label>
+        <input type="text" id="composeTags" placeholder="例：GAS, メモ, 初心者">
+      </div>
+
+      <div class="compose-field">
+        <label>本文 <span class="sublabel">必須・Markdown記法が使えます</span></label>
+        <textarea id="composeBody" placeholder="## 見出し&#10;&#10;本文をここに。&#10;&#10;関連ノートは [[ノート名]] で繋げられます。"></textarea>
+      </div>
+
+      <div class="compose-actions">
+        <button class="compose-btn compose-btn-cancel" id="composeCancel" type="button">キャンセル</button>
+        <button class="compose-btn compose-btn-submit" id="composeSubmit" type="button">投稿する</button>
+      </div>
+      <div class="compose-msg" id="composeMsg"></div>
+    </div>
   </div>
 
   <script>
@@ -1334,6 +1432,99 @@
 
     function closeMobileNote() {
       document.getElementById('mArticle').classList.remove('open');
+    }
+
+    // ===== Compose（会員ノート投稿）=====
+    const composeOverlay = document.getElementById('composeOverlay');
+    const composeFab = document.getElementById('composeFab');
+    const composeCancel = document.getElementById('composeCancel');
+    const composeSubmit = document.getElementById('composeSubmit');
+    const composeTitle = document.getElementById('composeTitle');
+    const composeTags = document.getElementById('composeTags');
+    const composeBody = document.getElementById('composeBody');
+    const composeMsg = document.getElementById('composeMsg');
+
+    function openCompose() {
+      composeOverlay.classList.add('open');
+      composeMsg.textContent = '';
+      composeMsg.className = 'compose-msg';
+    }
+    function closeCompose() {
+      composeOverlay.classList.remove('open');
+    }
+
+    composeFab.addEventListener('click', openCompose);
+    composeCancel.addEventListener('click', closeCompose);
+    composeOverlay.addEventListener('click', (e) => {
+      if (e.target === composeOverlay) closeCompose();
+    });
+
+    composeSubmit.addEventListener('click', async () => {
+      const title = composeTitle.value.trim();
+      const body = composeBody.value.trim();
+      const tags = composeTags.value.trim();
+
+      composeMsg.className = 'compose-msg';
+      if (!title || !body) {
+        composeMsg.className = 'compose-msg error';
+        composeMsg.textContent = 'タイトルと本文は必須です';
+        return;
+      }
+
+      composeSubmit.disabled = true;
+      composeSubmit.textContent = '投稿中...';
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'create_note',
+            token: token,
+            title: title,
+            body: body,
+            tags: tags
+          })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          composeMsg.className = 'compose-msg success';
+          composeMsg.textContent = '投稿しました。森を更新します...';
+          composeTitle.value = '';
+          composeTags.value = '';
+          composeBody.value = '';
+          setTimeout(() => {
+            closeCompose();
+            composeSubmit.disabled = false;
+            composeSubmit.textContent = '投稿する';
+            // グラフを再読み込みして新ノートを反映
+            loadGraph();
+          }, 1500);
+        } else {
+          composeMsg.className = 'compose-msg error';
+          composeMsg.textContent = translateComposeError(data.error);
+          composeSubmit.disabled = false;
+          composeSubmit.textContent = '投稿する';
+        }
+      } catch (err) {
+        composeMsg.className = 'compose-msg error';
+        composeMsg.textContent = '通信エラーが発生しました';
+        composeSubmit.disabled = false;
+        composeSubmit.textContent = '投稿する';
+        console.error(err);
+      }
+    });
+
+    function translateComposeError(code) {
+      const map = {
+        'no_token': 'ログインが必要です',
+        'token_expired': 'セッションが切れました。再ログインしてください',
+        'invalid_token': 'セッションが無効です。再ログインしてください',
+        'missing_fields': 'タイトルと本文は必須です',
+        'title_too_long': 'タイトルは100文字以内にしてください',
+        'body_too_long': '本文は20,000文字以内にしてください'
+      };
+      return map[code] || '投稿に失敗しました';
     }
 
     // ===== Markdown (minimal) =====
